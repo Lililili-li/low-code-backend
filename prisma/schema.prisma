@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户表
+model User {
+  id         Int       @id @default(autoincrement())
+  account    String    @unique @db.VarChar(20)
+  password   String    @db.VarChar(100)
+  user_name  String    @db.VarChar(20)
+  avatar     String?   @db.VarChar(255)
+  is_active  Boolean   @default(true)
+  team_id    Int?      @default(0) @db.Int
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime? @db.DateTime
+  is_deleted Boolean   @default(false)
+
+  @@map("user")
+}
+
+// 团队表
+model Team {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(255) // 企业名称
+  description String?   @db.VarChar(255) // 企业描述
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime? @db.DateTime
+  is_deleted  Boolean   @default(false)
+  @@map("team")
+}
+
+// 项目表
+model Project {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(255) // 项目名称
+  description String    @db.VarChar(255) // 项目描述
+  created_by  Int       @db.Int // 创建人
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime? @db.DateTime
+  is_deleted  Boolean   @default(false)
+  @@map("project")
+}
+
+// 应用表
+model Application {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique @db.VarChar(255) // 应用名称
+  created_by Int       @db.Int // 创建人
+  status     Int       @default(1) @db.Int // 状态 1为开发中 2测试中 3已发布
+  project_id Int       @db.Int // 项目ID
+  created_at DateTime  @default(now())
+  cover      String?   @db.VarChar(255) // 封面
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime? @db.DateTime
+  is_deleted Boolean   @default(false)
+  @@map("application")
+}
+
+// 页面表
+model ApplicationPage {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique @db.VarChar(255) // 应用名称
+  @@map("application_page")
+}
