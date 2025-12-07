@@ -4,8 +4,9 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module'
 import { UploadModule } from './modules/upload/upload.module';
 import { ApplicationModule } from './modules/application/application.module';
+import { ProjectModule } from './modules/project/project.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), UsersModule, AuthModule, UploadModule, ApplicationModule],
+  imports: [ConfigModule.forRoot(), UsersModule, AuthModule, UploadModule, ApplicationModule, ProjectModule],
 })
 export class AppModule { }
