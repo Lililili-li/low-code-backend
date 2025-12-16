@@ -3,9 +3,16 @@ import { AppModule } from './app.module';
 import { GlobalExceptionInterceptor } from './shared/exception.interceptor';
 import { GlobalResponseInterceptor } from './shared/response.interceptor';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+import * as express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  
+  // 配置静态文件服务 - 在拦截器之前配置，使用 Express 原生中间件绕过拦截器
+  app.use('/file', express.static(join(process.cwd(), 'upload', 'file')));
+  
   app.useGlobalInterceptors(new GlobalExceptionInterceptor());
   app.useGlobalInterceptors(new GlobalResponseInterceptor());
   app.useGlobalPipes(

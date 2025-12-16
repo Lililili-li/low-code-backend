@@ -1,16 +1,27 @@
-import { IsString, IsNotEmpty, MaxLength, IsOptional, IsPhoneNumber } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsOptional, IsPhoneNumber, IsInt } from 'class-validator';
 
 export class CreateApplicationDto {
-  @IsNotEmpty({ message: '手机号码不能为空' })
-  account!: string;
-  
-  @IsString({ message: 'password必须为字符串' })
-  @IsNotEmpty({ message: '密码不能为空' })
-  @MaxLength(16)
-  password!: string;
+  @IsNotEmpty({ message: '应用名称不能为空' })
+  name: string;
 
-  @IsString({ message: 'password必须为字符串' })
   @IsOptional()
-  @MaxLength(255)
-  avatar?: string;
+  @IsString({ message: '行业必须为字符串' })
+  industry_id?: string;
+
+  @IsNotEmpty({ message: '项目名称不能为空' })
+  @IsInt({ message: '项目ID必须为整数' })
+  project_id: number;
+
+  @IsOptional()
+  @IsString({ message: '应用描述必须为字符串' })
+  description?: string;
+
+  @IsOptional()
+  @IsString({ message: '应用封面图片必须为字符串' })
+  cover?: string;
+
+
+  @IsOptional()
+  @IsInt({ message: '状态必须为整数' })
+  status: number;
 }

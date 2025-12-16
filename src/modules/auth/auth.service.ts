@@ -32,7 +32,7 @@ export class AuthService {
     };
   }
 
-  async register({ account, password }: CreateUserDto): Promise<any> {
+  async register({ account, password, user_name, avatar }: CreateUserDto): Promise<any> {
     const user = await this.usersService.findByUsername(account);
     if (user) throw new HttpException({
       code: 400,
@@ -42,7 +42,8 @@ export class AuthService {
     const newUser = await this.usersService.createUser({
       account,
       password: hash,
-      user_name: '默认用户'
+      user_name: user_name || '默认用户',
+      avatar: avatar || null,
     });
     delete newUser.password;
     return {

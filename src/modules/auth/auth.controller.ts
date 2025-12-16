@@ -23,6 +23,8 @@ export class AuthController {
     return this.authService.register({
       account: registerDto.account,
       password: registerDto.password.toString(),
+      avatar: registerDto.avatar,
+      user_name: registerDto.user_name,
     });
   }
 }

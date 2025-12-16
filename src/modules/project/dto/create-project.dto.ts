@@ -1,13 +1,18 @@
 import { IsOptional, IsNotEmpty, IsInt } from "class-validator";
 
 export class CreateProjectDto {
-  @IsNotEmpty({ message: '项目名称不能为空' })
+  @IsNotEmpty({ message: 'name不能为空' })
   name: string;
+
+
+  @IsNotEmpty({ message: 'industry_id不能为空' })
+  industry_id: string;
 
   @IsOptional()
   description?: string;
 
   @IsOptional()
-  @IsInt({ message: '创建人必须为整数' })
+  @IsInt({ message: 'created_by必须为整数' })
   created_by?: number;
+  
 }

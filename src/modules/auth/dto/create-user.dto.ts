@@ -13,4 +13,9 @@ export class CreateUserDto {
   @IsOptional()
   @MaxLength(255)
   avatar?: string;
+
+  @IsString({ message: 'user_name必须为字符串' })
+  @IsOptional()
+  @MaxLength(20)
+  user_name?: string;
 }

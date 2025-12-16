@@ -16,8 +16,13 @@ export class ProjectController {
   }
 
   @Get()
-  findAll(@Request() req: Request, @Query() query: FindProjectDto) {
-    return this.projectService.findAll(req['user'].id, query);
+  findAll(@Query() query: FindProjectDto) {
+    return this.projectService.findAll(query);
+  }
+
+  @Get('all')
+  findAllProjects(@Request() req: Request) {
+    return this.projectService.findAllProjects(req['user']?.id);
   }
 
   @Get(':id')

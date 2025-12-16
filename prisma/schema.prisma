@@ -25,7 +25,7 @@ model User {
   team_id    Int?      @default(0) @db.Int
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
-  deleted_at DateTime? @db.DateTime
+  deleted_at DateTime? @db.DateTime(0)
   is_deleted Boolean   @default(false)
 
   @@map("user")
@@ -38,8 +38,9 @@ model Team {
   description String?   @db.VarChar(255) // 企业描述
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
-  deleted_at  DateTime? @db.DateTime
+  deleted_at  DateTime? @db.DateTime(0)
   is_deleted  Boolean   @default(false)
+
   @@map("team")
 }
 
@@ -47,33 +48,108 @@ model Team {
 model Project {
   id          Int       @id @default(autoincrement())
   name        String    @unique @db.VarChar(255) // 项目名称
-  description String?    @db.VarChar(255) // 项目描述
+  description String?   @db.VarChar(255) // 项目描述
   created_by  Int       @db.Int // 创建人
+  industry_id Int       @default(0) @db.Int
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
-  deleted_at  DateTime? @db.DateTime
-  is_deleted  Boolean?   @default(false)
+  deleted_at  DateTime? @db.DateTime(0)
+  is_deleted  Boolean?  @default(false)
+
   @@map("project")
+}
+
+// 行业表
+model Industry {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(255) // 项目名称
+  description String?  @db.VarChar(255) // 描述
+  sort        Int?     @default(0) @db.Int // 排序
+  created_at  DateTime @default(now())
+  is_active   Boolean  @default(true) // 是否启用
+  updated_at  DateTime @updatedAt
+
+  @@map("industry")
 }
 
 // 应用表
 model Application {
-  id         Int       @id @default(autoincrement())
-  name       String    @unique @db.VarChar(255) // 应用名称
-  created_by Int       @db.Int // 创建人
-  status     Int       @default(1) @db.Int // 状态 1为开发中 2测试中 3已发布
-  project_id Int       @db.Int // 项目ID
-  created_at DateTime  @default(now())
-  cover      String?   @db.VarChar(255) // 封面
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime? @db.DateTime
-  is_deleted Boolean   @default(false)
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(255) // 应用名称
+  created_by  Int       @db.Int // 创建人
+  status      Int       @default(1) @db.Int // 状态 1为开发中 2测试中 3已发布
+  project_id  Int       @db.Int // 项目ID
+  industry_id Int?      @db.Int // 行业ID
+  cover       String?   @db.VarChar(255) // 应用封面图片
+  description String?   @db.VarChar(255) // 应用描述
+  has_page    Boolean?  @default(false) // 是否含有页面 以免再去查询数据库
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime? @db.DateTime(0)
+  is_deleted  Boolean   @default(false)
+
   @@map("application")
 }
 
-// 页面表
-model ApplicationPage {
-  id         Int       @id @default(autoincrement())
-  name       String    @unique @db.VarChar(255) // 应用名称
-  @@map("application_page")
+model ApplicationUserRelation {
+  id             Int      @id @default(autoincrement())
+  application_id Int      @db.Int // 应用ID
+  user_id        Int      @db.Int // 用户ID
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("application_user_relation")
+}
+
+// 页面应用关联表
+model Page {
+  id             String      @id @db.VarChar(255)
+  name           String   @unique @db.VarChar(255) // 页面名称
+  schema         Json?
+  created_by     Int      @db.Int
+  is_template    Boolean  @default(false)
+  application_id Int      @db.Int
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("page")
+}
+
+model ComponentsCategory {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique @db.VarChar(255) // 组件名称
+  parent_id  Int?     @default(0)
+  icon       String?  @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("component_category")
+}
+
+model Components {
+  id          String   @id @db.VarChar(255)
+  name        String   @unique @db.VarChar(255) // 组件名称
+  cover       String   @db.VarChar(255) // 组件名称
+  internal    Boolean  @default(true)
+  category_id Int      @db.Int // 分类id
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("components")
+}
+
+// 字典表
+model Dict {
+  id          Int      @id @default(autoincrement())
+  code        String   @db.VarChar(100) // 字典编码（字段名，如 application_status）
+  value       String   @db.VarChar(100) // 枚举值（如 1, 2, 3）
+  label       String   @db.VarChar(255) // 枚举值对应的标签（如 开发中, 测试中, 已发布）
+  sort        Int      @default(0) @db.Int // 排序
+  description String?  @db.VarChar(255) // 描述
+  is_active   Boolean  @default(true) // 是否启用
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@unique([code, value, label])
+  @@map("dict")
 }
